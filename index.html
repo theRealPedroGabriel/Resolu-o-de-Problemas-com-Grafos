@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grafo Direcionado e DFS</title>
+  </head>
+  <body>
+    <h1>Grafo Direcionado e DFS</h1>
+
+    <div>
+      <label for="vertex">Vértice:</label>
+      <input type="text" id="vertex" placeholder="Insira um vértice" />
+      <button onclick="addVertex()">Adicionar Vértice</button>
+    </div>
+
+    <div>
+      <label for="fromVertex">De:</label>
+      <select id="fromVertex">
+        <!-- Opções para escolher o vértice de origem -->
+      </select>
+      <label for="toVertex">Para:</label>
+      <select id="toVertex">
+        <!-- Opções para escolher o vértice de destino -->
+      </select>
+      <button onclick="addEdge()">Adicionar Aresta</button>
+    </div>
+
+    <div>
+      <label for="startingVertex">Vértice de Início:</label>
+      <select id="startingVertex">
+        <!-- Opções para escolher o vértice de início da DFS -->
+      </select>
+      <button onclick="performDFS()">Executar DFS</button>
+    </div>
+
+    <h2>Resultado da DFS:</h2>
+    <ul id="dfsResult"></ul>
+
+    <script>
+      const graph = new Map();
+      const dfsResult = document.getElementById("dfsResult");
+
+      function addVertex() {
+        const vertexInput = document.getElementById("vertex");
+        const vertex = vertexInput.value;
+        if (vertex.trim() !== "") {
+          graph.set(vertex, []);
+          console.log(vertex, "adicionado com sucesso");
+          updateDropdowns();
+          vertexInput.value = "";
+        }
+      }
+
+      function addEdge() {
+        const fromVertex = document.getElementById("fromVertex").value;
+        const toVertex = document.getElementById("toVertex").value;
+        if (fromVertex !== toVertex) {
+          graph.get(fromVertex).push(toVertex);
+          console.log("aresta criada, de: ", fromVertex, ",para: ", toVertex);
+          updateDropdowns();
+        }
+      }
+
+      function performDFS() {
+        const startingVertex = document.getElementById("startingVertex").value;
+        const visited = new Set();
+        const dfsRecursive = (vertex) => {
+          visited.add(vertex);
+          const listItem = document.createElement("li");
+          listItem.textContent = vertex;
+          dfsResult.appendChild(listItem);
+          graph.get(vertex).forEach((neighbor) => {
+            if (!visited.has(neighbor)) {
+              dfsRecursive(neighbor);
+            }
+          });
+        };
+        dfsResult.innerHTML = "";
+        dfsRecursive(startingVertex);
+      }
+
+      function updateDropdowns() {
+        const fromVertexDropdown = document.getElementById("fromVertex");
+        const toVertexDropdown = document.getElementById("toVertex");
+        const startingVertexDropdown =
+          document.getElementById("startingVertex");
+        fromVertexDropdown.innerHTML = "";
+        toVertexDropdown.innerHTML = "";
+        startingVertexDropdown.innerHTML = "";
+        graph.forEach((neighbors, vertex) => {
+          const option1 = document.createElement("option");
+          option1.value = vertex;
+          option1.textContent = vertex;
+          fromVertexDropdown.appendChild(option1);
+          const option2 = document.createElement("option");
+          option2.value = vertex;
+          option2.textContent = vertex;
+          toVertexDropdown.appendChild(option2);
+          const option3 = document.createElement("option");
+          option3.value = vertex;
+          option3.textContent = vertex;
+          startingVertexDropdown.appendChild(option3);
+        });
+      }
+    </script>
+  </body>
+</html>
