@@ -81,6 +81,7 @@ function findStronglyConnectedWithVertex(graph, vertex) {
   let componentWithVertex = null;
 
   for (const component of stronglyConnectedComponents) {
+    //verifica os cluster se contem o vertex escolhido
     if (component.includes(vertex)) {
       componentWithVertex = [...component]; // Fazemos uma cópia para não modificar o original
 
@@ -88,7 +89,7 @@ function findStronglyConnectedWithVertex(graph, vertex) {
     }
   }
 
-  // Remove as conexões de vertex em componentWithVertex
+  // Remove o vertex
   if (componentWithVertex) {
     componentWithVertex = componentWithVertex.filter((v) => v !== vertex);
   }
@@ -105,6 +106,7 @@ const graph = [
   [3, 5],
   [4, 2],
   [4, 3],
+  [4, 8],
   [5, 4],
   [6, 0],
   [6, 4],
@@ -121,78 +123,43 @@ const graph = [
   [12, 9],
 ];
 
-const vertexToCheck = 4; // O vértice para o qual você deseja encontrar os vértices fortemente conectados
+const vertexToCheck = 2; // O vértice para encontrar os vértices fortemente conectados
 
-const result = findStronglyConnectedWithVertex(graph, vertexToCheck);
+const clusterVertex = findStronglyConnectedWithVertex(graph, vertexToCheck);
 
 console.log("Vértices fortemente conectados com", vertexToCheck);
-console.log(result);
+console.log(clusterVertex);
 
-const targetValue = vertexToCheck;
-const valuesToSubtract = result;
-
-const filteredEdges = graph
-  .filter(([left, right]) => left === targetValue)
-  .map(([left, right]) => [
-    left,
-    right - valuesToSubtract.includes(right) ? right : 0,
-  ]);
+const filteredEdges = graph.filter(([left, right]) => left === vertexToCheck);
+//pega as arestas do vertex
 
 console.log("Arestas- Seguindo, de: ", vertexToCheck);
 console.log(filteredEdges);
 
-const lista = filteredEdges;
-
 const listaFinal = [];
 
-for (let i = 0; i < lista.length; i++) {
-  listaFinal.push(...lista[i]);
+for (let i = 0; i < filteredEdges.length; i++) {
+  //desestrutura a lista de aresta
+  listaFinal.push(...filteredEdges[i]);
 }
 
 console.log("transforma em uma lista só: ", listaFinal);
-const lista2 = listaFinal;
 
-const listaFiltrada = lista2.filter((item) => {
-  return item !== targetValue;
+const listaFiltrada = listaFinal.filter((item) => {
+  //remove vertexToCheck da lista
+  return item !== vertexToCheck;
 });
 
 console.log("Remove a origem e deixa apenas os seguindo: ", listaFiltrada);
 
-//aaaaaaa
-const valuesToRemove = listaFiltrada;
+//remove os seguindo do clusterVertex
 
-const updatedValuesToSubtract = valuesToSubtract.filter(
-  (value) => !valuesToRemove.includes(value)
+const updatedValuesToSubtract = clusterVertex.filter(
+  (value) => !listaFiltrada.includes(value)
 );
 
 console.log("Novos provaveis seguidores: ");
 console.log(updatedValuesToSubtract);
 
 //[([1, 3, 2], [4, 6, 5])];
-console.log(
-  "(clusters)",
-  kosaraju([
-    [0, 5],
-    [0, 1],
-    [2, 0],
-    [2, 3],
-    [3, 2],
-    [3, 5],
-    [4, 2],
-    [4, 3],
-    [5, 4],
-    [6, 0],
-    [6, 4],
-    [6, 9],
-    [7, 6],
-    [7, 8],
-    [8, 7],
-    [8, 9],
-    [9, 10],
-    [9, 11],
-    [10, 12],
-    [11, 4],
-    [11, 12],
-    [12, 9],
-  ])
-);
+console.log("(clusters)", kosaraju(graph));
