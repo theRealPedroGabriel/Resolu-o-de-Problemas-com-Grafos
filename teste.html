@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>repl.it</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="default.css" rel="stylesheet" type="text/css" />
+
+    <!-- Função para redimensionar o canvas -->
+    <script>
+      function resizeCanvas() {
+        // Obtém a largura da homeHeader e define como largura do canvas
+        let new_width = parseFloat(
+          window.getComputedStyle(homeHeader, null).getPropertyValue("width")
+        );
+
+        pad.width = new_width;
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="main">
+      <h1>Teoria de grafos (dfs)</h1>
+      <!-- Script que contém a lógica do grafo -->
+      <script src="Graphs.js"></script>
+      <br />
+      <br />
+    </div>
+
+    <div class="textc">
+      <p>
+        Ajude o médico a chegar rapidamente ao destino(end), desafiando-o a
+        encontrar o melhor caminho. Ao clicar em um vértice e pressionar delete,
+        você pode simular uma interdição naquele ponto da rota. O algoritmo de
+        Dijkstra então recalculará a rota mais curta para contornar o obstáculo
+        inserido e levar o paciente em segurança ao hospital.
+      </p>
+    </div>
+
+    <!-- Contêiner do canvas e da imagem de fundo -->
+    <div id="canvasContainer">
+      <img
+        id="backgroundImage"
+        src="imagemGrafos.jpeg"
+        alt="Background Image"
+      />
+      <canvas id="meuCanvas" width="650" height="582"></canvas>
+    </div>
+
+    <!-- Seção de botões -->
+    <div class="textSection">
+      <div class="fun">
+        <button id="dfs">Dfs</button>
+        <button id="breadth first">Bfs</button>
+        <button id="diijkstra">Diijkstra</button>
+      </div>
+    </div>
+
+    <!-- Script para interação com o canvas e lógica de busca -->
+    <script>
+      // Obtém o elemento canvas no contexto
+      var canvas2 = document.getElementById("meuCanvas");
+      var contexto = canvas2.getContext("2d");
+      contexto.lineWidth = 5;
+
+      var imagem = new Image();
+
+      // Cria um objeto Graph para lidar com a lógica do grafo no canvas
+      let searchGraph = new Graph("meuCanvas");
+
+      // Criação de nós e conexões no grafo
+      let beginNode = searchGraph.node(20, 400, 15, "start");
+      let bNode = searchGraph.node(70, 530, 15, "b");
+      let cNode = searchGraph.node(80, 410, 15, "c");
+      let dNode = searchGraph.node(200, 530, 15, "d");
+      let eNode = searchGraph.node(160, 320, 15, "e");
+      let fNode = searchGraph.node(400, 300, 15, "f");
+      let gNode = searchGraph.node(200, 150, 15, "g");
+      let rNode = searchGraph.node(280, 340, 15, "cc");
+      let iNode = searchGraph.node(280, 440, 15, "i");
+      let endNode = searchGraph.node(400, 400, 15, "end");
+      gNode.connect(rNode, 11);
+      rNode.connect(endNode, 8);
+      endNode.connect(gNode, 20);
+      endNode.connect(fNode, 8);
+      //gNode.directional(fNode, 4);
+      gNode.connect(fNode, 15);
+      eNode.connect(gNode, 10);
+      cNode.connect(eNode, 6);
+      bNode.connect(dNode, 3);
+      bNode.connect(cNode);
+      iNode.connect(endNode, 8);
+      iNode.connect(rNode, 8);
+      dNode.connect(iNode, 8);
+      beginNode.connect(cNode, 2);
+      beginNode.connect(bNode, 6);
+      eNode.connect(dNode, 15);
+      cNode.connect(dNode, 2);
+
+      // Adiciona ouvintes de eventos aos botões
+      let depth_first_button = document.getElementById("dfs");
+      let breadth_first_button = document.getElementById("breadth first");
+      let diijkstra_button = document.getElementById("diijkstra");
+
+      depth_first_button.addEventListener("click", depth_wrapper);
+      breadth_first_button.addEventListener("click", breadth_wrapper);
+      diijkstra_button.addEventListener("click", diijkstra_wrapper);
+
+      // Função para obter o ID do nó de início
+      function getStartId() {
+        let start = searchGraph.getChildrenByText("start");
+
+        return start[0].id;
+      }
+
+      // Função para obter o ID do nó de destino
+      function getEndId() {
+        let end = searchGraph.getChildrenByText("end");
+
+        return end[0].id;
+      }
+
+      // Função para redefinir as cores das arestas
+      function reset() {
+        Object.values(searchGraph.edges).map((edge) => (edge.color = "green"));
+      }
+
+      // Função para envolver a busca em profundidade
+      async function depth_wrapper() {
+        reset();
+
+        let path = await searchGraph.depthFirstSearch(
+          getStartId(),
+          getEndId(),
+          true
+        );
+      }
+      
+      // Função para envolver o algoritmo de Dijkstra
+      async function diijkstra_wrapper() {
+        reset();
+        let thing = await searchGraph.diijkstra(getStartId(), getEndId(), true);
+      }
+
+      // Função para envolver a busca em largura
+      async function breadth_wrapper() {
+        reset();
+
+        let thing = await searchGraph.breadthFirstSearch(
+          getStartId(),
+          getEndId(),
+          true
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>repl.it</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="default.css" rel="stylesheet" type="text/css" />
+    <script src="highlight.pack.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+
+    <script>
+      function resizeCanvas() {
+        let new_width = parseFloat(
+          window.getComputedStyle(homeHeader, null).getPropertyValue("width")
+        );
+        console.log(new_width);
+        pad.width = new_width;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="main">
+      <h1>Teoria de grafos (dfs)</h1>
+
+      <br />
+      <br />
+      <script src="Graphs.js"></script>
+     
+
+      <br />
+      <br />
+
+      <div class="demoContainer">
+        <canvas width="600" height="500" id="searchGraph"></canvas>
+        <div class="textSection">
+          <div class="fun">
+            <br />
+            <p>
+      
+             
+            </p>
+            <br />
+            <button id="dfs">Dfs</button>
+            <button id="breadth first">Bfs</button>
+            <button id="diijkstra">Diijkstra</button>
+          
+            <br />
+            <br />
+            <p>
+              essa aplicação serve para achar o caminho do start pro end
+            </p>
+            <br />
+            <br />
+            <p>
+              Isso permite desenhar linhas <i>direcionais</i> ou
+              <i>biDirecionais</i> 
+            </p>
+            <button id="setDirectional">Direcional</button>
+            <button id="setBiDirectional">BiDirecional</button>
+            <br />
+            <button id="reset_button">reset</button>
+          </div>
+         
+        </div>
+        <script>
+          let searchGraph = new Graph("searchGraph");
+
+          let beginNode = searchGraph.node(100, 100, 25, "start");
+          let bNode = searchGraph.node(180, 80, 25, "b");
+          let cNode = searchGraph.node(175, 300, 30, "c");
+          let dNode = searchGraph.node(220, 380, 25, "d");
+          let eNode = searchGraph.node(240, 260, 25, "e");
+          let fNode = searchGraph.node(400, 250, 25, "f");
+          let gNode = searchGraph.node(300, 100, 25, "g");
+          let rNode = searchGraph.node(300, 270, 25, "h");
+          let endNode = searchGraph.node(450, 450, 25, "end");
+          gNode.connect(rNode);
+          rNode.connect(endNode);
+          endNode.connect(gNode, 25);
+          endNode.connect(fNode, 17);
+          gNode.directional(fNode, 4);
+          eNode.connect(gNode);
+          cNode.connect(eNode, 6);
+          bNode.connect(eNode, 3);
+          bNode.connect(cNode);
+          dNode.connect(fNode, 16);
+          beginNode.directional(cNode, 6);
+          beginNode.connect(bNode, 2);
+          eNode.connect(dNode, 3);
+          cNode.connect(dNode, 2);
+
+          let depth_first_button = document.getElementById("dfs");
+          let breadth_first_button = document.getElementById("breadth first");
+          let reset_button = document.getElementById("reset_button");
+          let diijkstra_button = document.getElementById("diijkstra");
+          let Astar_button = document.getElementById("Astar");
+          let setDirectional_button = document.getElementById("setDirectional");
+          let setBiDirectional_button =
+            document.getElementById("setBiDirectional");
+          depth_first_button.addEventListener("click", depth_wrapper);
+          breadth_first_button.addEventListener("click", breadth_wrapper);
+          diijkstra_button.addEventListener("click", diijkstra_wrapper);
+          Astar_button.addEventListener("click", Astar_wrapper);
+          reset_button.addEventListener("click", reset);
+          setDirectional.addEventListener("click", () =>
+            searchGraph.setDirectional()
+          );
+          setBiDirectional.addEventListener("click", () =>
+            searchGraph.setBiDirectional()
+          );
+
+          function getStartId() {
+            let start = searchGraph.getChildrenByText("start");
+
+            return start[0].id;
+          }
+
+          function getEndId() {
+            let end = searchGraph.getChildrenByText("end");
+
+            return end[0].id;
+          }
+
+          function reset() {
+            Object.values(searchGraph.edges).map(
+              (edge) => (edge.color = "black")
+            );
+          }
+
+          async function depth_wrapper() {
+            reset();
+            console.log("here");
+            let path = await searchGraph.depthFirstSearch(
+              getStartId(),
+              getEndId(),
+              true
+            );
+            console.log(path);
+          }
+
+          async function diijkstra_wrapper() {
+            reset();
+            let thing = await searchGraph.diijkstra(
+              getStartId(),
+              getEndId(),
+              true
+            );
+          }
+
+          async function Astar_wrapper() {
+            reset();
+            let thing = await searchGraph.Astar(getStartId(), getEndId(), true);
+          }
+
+          async function breadth_wrapper() {
+            reset();
+
+            let thing = await searchGraph.breadthFirstSearch(
+              getStartId(),
+              getEndId(),
+              true
+            );
+          }
+          function log_all_values() {
+            searchGraph.objs.map((node) => console.log(node.value));
+          }
+        </script>
+      </div>
+
+      <br />
+      <br />
+
+      
+        <script>
+          let nodeking2 = new Graph("canvas2");
+          nodeking2.setNodeSetupCallback((node) => {
+            let images = [
+              "https://media1.popsugar-assets.com/files/thumbor/LfOJxhNfU8EftMFF_YPT5Fm5PwQ/263x100:2721x2558/fit-in/2048xorig/filters:format_auto-!!-:strip_icc-!!-/2020/04/06/953/n/1922398/d81efb315e8ba4da48b3b7.11171110_/i/Kevin-Bacon.jpg",
+              "https://pbs.twimg.com/profile_images/1240039886343688192/ddEgtzqr_400x400.jpg",
+              "https://m.media-amazon.com/images/M/MV5BOTQxMTEyMjI0NV5BMl5BanBnXkFtZTgwODE4ODAzMjE@._V1_.jpg",
+              "https://media.npr.org/assets/img/2011/11/22/kevinbacon_custom-008ac9d4aa108bcc152d5813a006362d286d6984-s800-c85.jpg",
+            ];
+            node.setImage(images[Math.floor(Math.random() * images.length)]);
+          });
+          nodeking2.node(137, 137, 35);
+        </script>
+      </div>
+      <br />
+      <br />
+      
+      
+      <br />
+      <script>
+        let switchers = Array.from(
+          document.getElementsByClassName("switchbox")
+        );
+
+        function flipper(event) {
+          let flip = "fun";
+          let flop = "docs";
+          if (this.checked) {
+          } else {
+            flip = "docs";
+            flop = "fun";
+          }
+          let funs = Array.from(document.getElementsByClassName(flip));
+          funs.map((item) => (item.style.display = "none"));
+          let docs = Array.from(document.getElementsByClassName(flop));
+          docs.map((item) => (item.style.display = "block"));
+          if (flip === "fun") {
+            switchers.map((item) => {
+              item.checked = true;
+            });
+          } else {
+            switchers.map((item) => {
+              item.checked = false;
+            });
+          }
+        }
+
+        switchers.map((switchbox) =>
+          switchbox.addEventListener("change", flipper)
+        );
+      </script>
+
+
+
+      <script>
+        let canvas = document.getElementById("canvas");
+        
+        let graph = new Graph(canvas);
+        
+  
+        var contexto = canvas.getContext('2d');
+
+        // Cria uma nova imagem
+        var imagem = new Image();
+
+        // Define a fonte da imagem
+        imagem.src = "imagemGrafos.jpeg";
+
+        // Espera a imagem carregar antes de desenhá-la no canvas
+        imagem.onload = function() {
+          // Desenha a imagem no canvas nas coordenadas (0, 0) - canto superior esquerdo
+          contexto.drawImage(imagem, 0, 0);
+        };
+        
+
+        let start = graph.node(100, 100, 40, "start");
+        let medium = graph.node(300, 200, 35, "thing");
+        let end = graph.node(100, 400, 40, "end");
+
+        start.directional(medium, 13);
+        medium.biDirectional(end, 5);
+        end.directional(start, 1);
+
+        //Graph.load(graph, canvas);
+
+        let nodeking3 = new Graph("canvas3");
+
+        function animateNode(node) {
+          console.log("-->");
+          console.log(node.contextid);
+          let graph = Graph.getContext(node.contextid);
+          console.log(graph);
+          let x = Math.random() * 6 - 3;
+          let y = Math.random() * 6 - 3;
+
+          function move() {
+            node.x += x;
+            node.y += y;
+            if (node.x - node.r < 0) {
+              if (x < 0) {
+                x *= -1;
+              }
+            }
+            if (node.x + node.r > graph.canvas.width) {
+              if (x > 0) {
+                x *= -1;
+              }
+            }
+            if (node.y + node.r > graph.canvas.width) {
+              if (y > 0) {
+                y *= -1;
+              }
+            }
+            if (node.y - node.r < 0) {
+              if (y < 0) {
+                y *= -1;
+              }
+            }
+
+            for (let key of Object.keys(node.edges)) {
+              graph
+                .getEdgeById(key)
+                .setText(
+                  Math.round(nodeking3.getDistance(node.id, node.edges[key]))
+                );
+            }
+            setTimeout(move, 1000 / 60);
+          }
+          move();
+        }
+
+        nodeking3.setNodeSetupCallback(animateNode);
+        nodeking3.vars.tick = 0;
+        function doDiijkstra(graph) {
+          graph.vars.tick += 1;
+          if (graph.vars.tick % 20 == 0) {
+            Object.values(graph.edges).map((edge) => edge.setColor("black"));
+            graph.diijkstra(graph.vars.A.id, graph.vars.B.id);
+          }
+        }
+        nodeking3.setTickCallback(doDiijkstra);
+        nodeking3.vars.A = nodeking3.node(100, 100, 20, "A");
+        nodeking3.vars.B = nodeking3.node(200, 200, 20, "B");
+        nodeking3.vars.C = nodeking3.node(46, 60, 20);
+        nodeking3.vars.D = nodeking3.node(370, 285, 20);
+        nodeking3.vars.E = nodeking3.node(250, 90, 20);
+        nodeking3.vars.F = nodeking3.node(400, 370, 20);
+        nodeking3.vars.A.connect(nodeking3.vars.C);
+        nodeking3.vars.C.connect(nodeking3.vars.D);
+        nodeking3.vars.C.connect(nodeking3.vars.E);
+        nodeking3.vars.E.directional(nodeking3.vars.D);
+        nodeking3.vars.A.connect(nodeking3.vars.E);
+        nodeking3.vars.D.connect(nodeking3.vars.F);
+        nodeking3.vars.F.connect(nodeking3.vars.B);
+        nodeking3.vars.B.connect(nodeking3.vars.D);
+        
+      </script>
+
+
+
+
+
+      <div class="main"><canvas id="meuCanvas" width="650" height="582"></canvas></div>
+       
+    </div> 
+
+
+
+  <script>
+    // Obtém o elemento canvas e seu contexto
+    var canvas2 = document.getElementById('meuCanvas');
+    var contexto = canvas2.getContext('2d');
+
+    // Cria uma nova imagem
+    var imagem = new Image();
+
+    // Define a fonte da imagem
+    imagem.src = "imagemGrafos.jpeg";
+
+    // Espera a imagem carregar antes de desenhá-la no canvas
+    imagem.onload = function() {
+      // Desenha a imagem no canvas nas coordenadas (0, 0) - canto superior esquerdo
+      contexto.drawImage(imagem, 0, 0);
+    };
+
+    
+  </script>
+
+  </body>
+</html>

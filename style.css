@@ -1,0 +1,159 @@
+canvas {
+  display: inline-block;
+  border: 1px solid black;
+}
+
+body {
+  overflow-y: scroll;
+
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.demoContainer {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+}
+
+.docs {
+  display: none;
+
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+@media only screen and (min-width: 1000px) {
+  .main {
+    width: 80%;
+    margin: auto;
+  }
+}
+
+@media only screen and (max-width: 760px) {
+  .demoContainer {
+    display: block;
+    flex-direction: none;
+    width: 100%;
+  }
+  body {
+    background-color: #222;
+    color: white;
+  }
+
+  canvas {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+img {
+}
+
+.textSection {
+  width: 100%;
+  height: 50px;
+  padding: 15px;
+
+  background-color: #000;
+  color: white;
+
+  overflow-y: scroll;
+  text-overflow: ellipsis;
+}
+
+#baconSection {
+  height: 275px;
+}
+#animatedTextSection {
+  height: 575px;
+}
+.fun i {
+  font-style: normal;
+  background-color: orange;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+.docs i {
+  font-style: normal;
+  background-color: #2196f3;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.fun {
+  display: flex;
+
+  justify-content: center;
+}
+#canvasContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw; /* 100% da largura da viewport */
+  height: 100vh; /* 100% da altura da viewport */
+}
+
+#canvas {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+}
+
+#backgroundImage {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  object-fit: cover; /* Garante que a imagem cubra completamente o espaço disponível */
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+  left: 22%; /* Ajuste o valor conforme necessário para mover a imagem para a direita */
+}
+
+.textc {
+  width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.textc p {
+  font-weight: bold;
+  font-size: 20px;
+}
+button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
