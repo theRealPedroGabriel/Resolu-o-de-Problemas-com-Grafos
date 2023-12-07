@@ -133,6 +133,7 @@ class Graph {
       this.delete(lookupid);
       this.insert(newItem, newValue, lookupid);
     };
+
     this.delete = function (lookupid) {
       if (this.hasItem(lookupid)) {
         let index = this.getIndex(lookupid);
@@ -1129,6 +1130,7 @@ Graph._node = function (contextid, x = false, y = false, r = false, text = "") {
   this.contextid = contextid;
   this.root = true;
   this.active = false;
+  this.isAmbulance = false;
   this.value = null;
   this.func = null;
   this.args = [];
@@ -1138,6 +1140,7 @@ Graph._node = function (contextid, x = false, y = false, r = false, text = "") {
       Object.keys(Graph.getContext(this.contextid).objs).length +
       Math.floor(Math.random() * 9999)
   );
+
   this.activeColor = "#aaa";
   this.image = null;
 
@@ -1340,6 +1343,62 @@ Graph._node = function (contextid, x = false, y = false, r = false, text = "") {
   };
   if (x && y && r) {
     this.create(x, y, r, text);
+  }
+};
+Graph._node.prototype.draw = function () {
+  let context = Graph.getContext(this.contextid);
+  context.ctx.beginPath();
+  context.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+  context.ctx.fillStyle = this.isAmbulance ? "yellow" : "white"; // Cor amarela se for ambulância
+  context.ctx.fill();
+  context.ctx.stroke();
+};
+Graph._node.prototype.drawAmbulance = function () {
+  this.isAmbulance = true; // Define o nó como ambulância
+  this.draw(); // Chama o método de desenho
+};
+
+Graph.prototype.moveAmbulance = async function (path) {
+  for (const nodeId of path) {
+    let node = this.getNodeById(nodeId);
+
+    // Define o nó atual como ambulância
+    this.ambulance = node;
+    if (typeof node.drawAmbulance === "function") {
+      node.drawAmbulance(); // Desenha a ambulância no nó atual
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Aguarde 1 segundo (ou mais, se necessário)
+  }
+};
+
+Graph.prototype.recalculateAmbulancePath = async function () {
+  let currentAmbulancePosition = this.ambulance.id;
+  let newPath = await this.diijkstra(
+    currentAmbulancePosition,
+    this.destinationId,
+    true
+  );
+  this.moveAmbulance(newPath);
+};
+Graph._node.prototype.delete = function () {
+  // Obter o contexto do grafo para acessar os nós e arestas
+  let context = Graph.getContext(this.contextid);
+
+  // Excluir todas as arestas conectadas a este nó
+  for (let edgeId in this.edges) {
+    let edge = context.edges[edgeId];
+    if (edge) {
+      delete context.edges[edgeId]; // Remove a aresta do grafo
+    }
+  }
+
+  // Remover este nó da lista de nós do grafo
+  delete context.objs[this.id];
+
+  // Verifica se este nó está no caminho da ambulância e recalcula o caminho, se necessário
+  if (context.ambulancePath && context.ambulancePath.includes(this.id)) {
+    context.recalculateAmbulancePath();
   }
 };
 

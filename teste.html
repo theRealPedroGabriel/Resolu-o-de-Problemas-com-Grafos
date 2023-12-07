@@ -137,11 +137,18 @@
           true
         );
       }
-      
+
       // Função para envolver o algoritmo de Dijkstra
+      // Exemplo de chamada após calcular o caminho
       async function diijkstra_wrapper() {
         reset();
-        let thing = await searchGraph.diijkstra(getStartId(), getEndId(), true);
+        let pathInfo = await searchGraph.diijkstra(
+          getStartId(),
+          getEndId(),
+          true
+        );
+        searchGraph.destinationId = getEndId(); // Armazene o destino para uso posterior
+        searchGraph.moveAmbulance(pathInfo.path);
       }
 
       // Função para envolver a busca em largura
